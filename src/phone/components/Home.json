@@ -1,0 +1,992 @@
+{
+  "attributes": {
+    "twx-widget": "",
+    "widget-id": "view-1",
+    "widget-name": "view-1",
+    "is-widget-container": "true",
+    "viewtype": "ar"
+  },
+  "children": [
+    {
+      "name": "twx-container-content",
+      "children": [
+        {
+          "attributes": {
+            "twx-widget": "",
+            "widget-id": "3DContainer-1",
+            "widget-name": "3D Container",
+            "is-widget-container": "true",
+            "enabletrackingevents": "true"
+          },
+          "name": "twx-dt-view",
+          "children": [
+            {
+              "name": "twx-container-content",
+              "children": [
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "areaTarget-1",
+                    "xml-data": "Uploaded/factoryzone.xml",
+                    "tracking-indicator": "false",
+                    "target-id": "factoryzone",
+                    "default-guide-text": "Trying to locate factoryzone",
+                    "widget-name": "areaTarget-1",
+                    "trackingacquired-expression": "go()",
+                    "dataset": "Uploaded/factoryzone.dat",
+                    "src": "Uploaded/factoryzone.glb",
+                    "x": "-6.6210",
+                    "y": "0.3000",
+                    "z": "-10.1300",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-target-area"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "i1",
+                    "widget-name": "i1",
+                    "src": "Uploaded/panelInfo1.png",
+                    "scale": "0.2500",
+                    "x": "4.5110",
+                    "y": "-0.0368",
+                    "z": "2.3584",
+                    "rx": "179.21",
+                    "ry": "-71.52",
+                    "rz": "-179.25"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "i2",
+                    "widget-name": "i2",
+                    "src": "Uploaded/panelInfo1.png",
+                    "scale": "0.2500",
+                    "x": "-1.5506",
+                    "y": "-0.0962",
+                    "z": "3.8418",
+                    "rx": "178.90",
+                    "ry": "-34.65",
+                    "rz": "-179.38"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "i4",
+                    "widget-name": "i4",
+                    "src": "Uploaded/panelInfo2.png",
+                    "scale": "0.2500",
+                    "x": "-3.9439",
+                    "y": "0.1719",
+                    "z": "3.8251",
+                    "rx": "-177.39",
+                    "ry": "32.29",
+                    "rz": "-178.60"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "i5",
+                    "widget-name": "i5",
+                    "src": "Uploaded/panelInfo3.png",
+                    "scale": "0.2500",
+                    "x": "1.4561",
+                    "y": "-0.2959",
+                    "z": "3.4599",
+                    "rx": "179.82",
+                    "ry": "-40.00",
+                    "rz": "-179.11",
+                    "pivot": "7"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "i3",
+                    "widget-name": "i3",
+                    "src": "Uploaded/panelInfo3.png",
+                    "scale": "0.2500",
+                    "x": "-1.9897",
+                    "y": "-0.4043",
+                    "z": "3.9764",
+                    "rx": "180.00",
+                    "ry": "-21.76",
+                    "rz": "180.00",
+                    "pivot": "7"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "panelshader",
+                    "widget-name": "panelshader",
+                    "text": "<script name=\"panelHilite2hl\" type=\"x-shader/x-vertex\">\n\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n  float4x4 model;\n  float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n  float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n  float4x4 viewProjection[2];\n  float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n  half4    pos      : POSITION;\n  half2    texcoord : TEXCOORD;\n  uint     instId   : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n  half4    pos      : SV_POSITION;\n  half3    I        : NORMAL0;\n  half2    tex      : TEXCOORD0;\n  uint     rtvId    : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n  VertexShaderOutput output;\n  half4 pos = half4(input.pos);\n\n  // Note which view this vertex has been sent to. Used for matrix lookup.\n  // Taking the modulo of the instance ID allows geometry instancing to be used\n  // along with stereo instanced drawing; in that case, two copies of each\n  // instance would be drawn, one for left and one for right.\n  int idx = input.instId % 2;\n\n  // Transform the vertex position into world space.\n  pos = mul(pos, model);\n  // I = v pos in view space\n  half4 eye = half4(0., 0., 0., 1.);\n  output.I  = (pos - mul(eye, viewInverse)).xyz;\n\n\n  // Correct for perspective and project the vertex position onto the screen.\n  pos        = mul(pos, viewProjection[idx]);\n  output.pos = (half4)pos;\n\n  // texture coordinate\n  output.tex = input.texcoord;\n\n  // Set the instance ID. The pass-through geometry shader will set the\n  // render target array index to whatever value is set here.\n  output.rtvId = idx;\n\n  return output;\n}\n</script>\n<script name=\"panelHilite2hl\" type=\"x-shader/x-fragment\">\nTexture2D Texture1 : register(t0);\nTexture2D Texture2 : register(t1);\nsampler Sampler    : register(s0);\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4  highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool     useTexture;\n    bool     useLight;\n    float    transparency;\n    int      pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float    tick;\n    float3   ding;\n};\n\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float    r;\n    float    g;\n    float    b;\n    float    ff;\n    float    nf;\n};\n\ncbuffer MaterialConstantBuffer : register(b2)\n{\n    float4   diffuseColor;\n    int      twoSided;\n    int      useTextureMap;\n    int      useNormalMap;\n    int      useSpecularMap;\n};\n\ncbuffer ModelConstantBuffer : register(b3)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4    pos      : SV_POSITION;\n    half3    I        : NORMAL0;\n    half2    tex      : TEXCOORD0;\n};\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n  min16float4 highlightColorFinal = min16float4(0,0,0,0);\n  if (highlightColor.x >= 0.0) {\n    highlightColorFinal = min16float4(highlightColor);\n  }\n\n  min16float4 hlt = min16float4(r,g,b,1.);\n  min16float4 tx1 = min16float4(Texture1.Sample(Sampler, input.tex));\n  min16float4 tx2 = min16float4(Texture2.Sample(Sampler, input.tex));\n\n  min16float4 rx2 = (tx2.r * hlt + min16float4(1.,1.,1.,1.) * tx2.b) * tx2.a;\n\n  float dz = length(input.I);\n  float cd = (ff > 0.) ? smoothstep((ff * 2.), ff, dz) : 1.;\n  float od = smoothstep((nf / 2.), nf, dz);\n  float gz = clamp(cd * od, 0., 1.);\n\n  min16float4 color = lerp(rx2,lerp(tx1,rx2,rx2.a),gz); //min16float4(lerp(rx2,lerp(tx1,rx2,rx2.a),gz);\n\n  min16float4 highlightedOutputColor = color + highlightColorFinal;\n  return      highlightedOutputColor;\n}\n</script>\n\n<script name=\"panelTraffichl\" type=\"x-shader/x-vertex\">\n\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n  float4x4 model;\n  float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n  float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n  float4x4 viewProjection[2];\n  float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n  half4    pos      : POSITION;\n  half2    texcoord : TEXCOORD;\n  uint     instId   : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n  half4    pos      : SV_POSITION;\n  half3    I        : NORMAL0;\n  half2    tex      : TEXCOORD0;\n  uint     rtvId    : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n  VertexShaderOutput output;\n  half4 pos = half4(input.pos);\n\n  // Note which view this vertex has been sent to. Used for matrix lookup.\n  // Taking the modulo of the instance ID allows geometry instancing to be used\n  // along with stereo instanced drawing; in that case, two copies of each\n  // instance would be drawn, one for left and one for right.\n  int idx = input.instId % 2;\n\n  // Transform the vertex position into world space.\n  pos = mul(pos, model);\n  // I = v pos in view space\n  half4 eye = half4(0., 0., 0., 1.);\n  output.I  = (pos - mul(eye, viewInverse)).xyz;\n\n\n  // Correct for perspective and project the vertex position onto the screen.\n  pos        = mul(pos, viewProjection[idx]);\n  output.pos = (half4)pos;\n\n  // texture coordinate\n  output.tex = input.texcoord;\n\n  // Set the instance ID. The pass-through geometry shader will set the\n  // render target array index to whatever value is set here.\n  output.rtvId = idx;\n\n  return output;\n}\n</script>\n<script name=\"panelTraffichl\" type=\"x-shader/x-fragment\">\nTexture2D Texture1 : register(t0);\nTexture2D Texture2 : register(t1);\nsampler Sampler    : register(s0);\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4  highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool     useTexture;\n    bool     useLight;\n    float    transparency;\n    int      pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float    tick;\n    float3   ding;\n};\n\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float    state;\n    float    ff;\n    float    nf;\n};\n\ncbuffer MaterialConstantBuffer : register(b2)\n{\n    float4   diffuseColor;\n    int      twoSided;\n    int      useTextureMap;\n    int      useNormalMap;\n    int      useSpecularMap;\n};\n\ncbuffer ModelConstantBuffer : register(b3)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4    pos      : SV_POSITION;\n    half3    I        : NORMAL0;\n    half2    tex      : TEXCOORD0;\n};\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n  min16float4 highlightColorFinal = min16float4(0,0,0,0);\n  if (highlightColor.x >= 0.0) {\n    highlightColorFinal = min16float4(highlightColor);\n  }\n\n  min16float4 tx1 = min16float4(Texture1.Sample(Sampler, input.tex));\n  min16float4 tx2 = min16float4(Texture2.Sample(Sampler, input.tex));\n  float istate = (state == 0.) ? 1.+floor(tick*10. % 3.) : state;\n  min16float4 hlt = min16float4(istate<=2.?1.:0.,\n                                istate>=2.?1.:0.,\n                                0.,tx2.a);\n\n  min16float4 rx2 = istate==1.? tx2.r * hlt :\n                    istate==2 ? tx2.g * hlt :\n                    istate==3 ? tx2.b * hlt :\n                    min16float4(0.,0.,0.,0.);\n\n  float dz = length(input.I);\n  float cd = (ff > 0.) ? smoothstep((ff * 2.), ff, dz) : 1.;\n  float od = smoothstep((nf / 2.), nf, dz);\n  float gz = clamp(cd * od, 0., 1.);\n\n  min16float4 color = lerp(rx2,lerp(tx1,rx2,rx2.a),gz); \n\n  min16float4 highlightedOutputColor = color + highlightColorFinal;\n  return      highlightedOutputColor;\n}\n</script>"
+                  },
+                  "name": "twx-tml-text"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "billboarder",
+                    "widget-name": "billboarder",
+                    "auto": "false",
+                    "affects": "navMarker,i2,i3"
+                  },
+                  "name": "twx-billboard"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "model-1",
+                    "widget-name": "model-1",
+                    "is-widget-container": "true",
+                    "scale": "1.0000",
+                    "x": "1.4927",
+                    "y": "-0.3804",
+                    "z": "3.6306",
+                    "rx": "0.00",
+                    "ry": "84.62",
+                    "rz": "0.00",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "introPanel",
+                    "widget-name": "introPanel",
+                    "aligned-expression": "introduction()",
+                    "following": "true",
+                    "affects": "tl1,tl2,o3dl1,ippb1,ippb2,ippb3,ippb4,ippb5",
+                    "height": "0.22",
+                    "width": "0.2",
+                    "scale": "0.2 0.22 1",
+                    "visible": "false"
+                  },
+                  "name": "twx-tethered",
+                  "children": [
+                    {
+                      "attributes": {
+                        "databind-id": "db-1619953339728",
+                        "source-type": "ui",
+                        "source-label": "3D Image Button",
+                        "source-name": "tl2",
+                        "source-item-type": "property",
+                        "source-item-name": "pressed",
+                        "binding-type": "widget_property",
+                        "from-expression": "app.view['Home'].wdg['tl2']['pressed']",
+                        "to-property": "following"
+                      },
+                      "name": "twx-databind"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "tl1",
+                    "state-format-value": "text",
+                    "font-color": "white",
+                    "widget-name": "tl1",
+                    "text": "Schedule",
+                    "height": "0.025",
+                    "width": "0.1",
+                    "scale": "1.0000",
+                    "x": "-0.0416",
+                    "y": "0.0858",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-label"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "o3dl1",
+                    "line-count": "2",
+                    "widget-name": "o3dl1",
+                    "text": "Good morning Marty\\nHere are your tasks for today :-",
+                    "font": "bold 120px Arial",
+                    "x": "-0.015",
+                    "y": "0.058",
+                    "height": "0.0219",
+                    "width": "0.15"
+                  },
+                  "name": "octo-multilinelabel"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "navigator-1",
+                    "widget-name": "navigator-1",
+                    "arrived-expression": "arrived()",
+                    "head": "false",
+                    "cutoff": "1",
+                    "auto": "true"
+                  },
+                  "name": "twx-navigator",
+                  "children": [
+                    {
+                      "attributes": {
+                        "databind-id": "db-1619778151503",
+                        "source-type": "data",
+                        "source-name": "targetloc",
+                        "source-item-type": "value",
+                        "source-item-name": "targetloc",
+                        "binding-type": "custom_field",
+                        "from-expression": "app.params['targetloc']",
+                        "to-property": "poidata"
+                      },
+                      "name": "twx-databind"
+                    },
+                    {
+                      "attributes": {
+                        "databind-id": "db-1619778620858",
+                        "source-type": "data",
+                        "source-name": "floorOffset",
+                        "source-item-type": "value",
+                        "source-item-name": "floorOffset",
+                        "binding-type": "custom_field",
+                        "from-expression": "app.params['floorOffset']",
+                        "to-property": "floor"
+                      },
+                      "name": "twx-databind"
+                    },
+                    {
+                      "attributes": {
+                        "eventbind-id": "eb-1619885882059",
+                        "source-type": "widget",
+                        "source-label": "Navigator",
+                        "source-name": "navigator-1",
+                        "source-event": "arrived",
+                        "handler-type": "ui",
+                        "handler-name": "pinnedInfoPanel",
+                        "handler-service": "show",
+                        "handler-path": "app.view[\"Home\"].wdg[\"pinnedInfoPanel\"].svc.show"
+                      },
+                      "name": "twx-eventbind"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "partslist",
+                    "widget-name": "partslist",
+                    "is-widget-container": "true",
+                    "src": "Uploaded/partslist3_HighFlat3.pvz",
+                    "scale": "1.0000",
+                    "x": "0.0000",
+                    "y": "0.0000",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "visible": "false",
+                    "opacity": "0.7"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "desatShader",
+                    "widget-name": "desatShader",
+                    "text": "<script name=\"desaturated_hl\" type=\"x-shader/x-fragment\">\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4  highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool    useTexture;\n    bool    useLight;\n    float   transparency;\n    int     pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float   tick;\n    float3  ding;\n};\n\ncbuffer MaterialConstantBuffer : register(b2)\n{\n    float4  diffuseColor;\n    int     twoSided;\n    int     useTextureMap;\n    int     useNormalMap;\n    int     useSpecularMap;\n};\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float   nearFade;\n    float   blend;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4   pos : SV_POSITION;\n    half3   I   : NORMAL0;\n    half3   N   : TEXCOORD0;\n    half3   P   : TEXCOORD1;\n};\n\nhalf4 luma(half4 inc) \n{\n    // desaturate color - this is the S in the HSV equation\n    float mc = min(min(inc.x, inc.y), inc.z);\n    float xc = max(max(inc.x, inc.y), inc.z);\n    float dc = (mc + xc) / 2.;\n    return half4(dc, dc, dc, inc.w);\n}\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n    min16float4 highlightColorFinal = min16float4(0,0,0,0);\n    if (highlightColor.x >= 0.0) {\n        highlightColorFinal = min16float4(highlightColor);\n    }\n    \n    float4 base   = float4(diffuseColor.xyz,transparency);\n    float4 color  = lerp(luma(base),base,blend);\n    float opacity = abs(dot(normalize(-input.N), normalize(-input.I)));\n\n    min16float4 finalShadedColor = min16float4(color * opacity);\n\n    // fade when really close\n    float od = length(input.I);\n    float gz = smoothstep((nearFade / 2.), nearFade, od);\n    \n    min16float4 highlightedOutputColor;\n    highlightedOutputColor.xyz = lerp(finalShadedColor.xyz, highlightColorFinal.xyz, highlightColorFinal.w);\n    highlightedOutputColor.w = min16float(finalShadedColor.w);\n    return highlightedOutputColor * gz;\n}\n</script>\n<script name=\"desaturated_hl\" type=\"x-shader/x-vertex\">\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n    float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n    float4x4 viewProjection[2];\n    float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n    half4 pos     : POSITION;\n    half4 normal  : NORMAL;\n    half2 texcoord: TEXCOORD;\n    uint  instId  : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n    half4 pos     : SV_POSITION;\n    half3 I       : NORMAL0;\n    half3 N       : TEXCOORD0;\n    half3 P       : TEXCOORD1;\n    uint  rtvId   : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n    VertexShaderOutput output;\n    half4 pos = half4(input.pos);\n\n    // Note which view this vertex has been sent to. Used for matrix lookup.\n    // Taking the modulo of the instance ID allows geometry instancing to be used\n    // along with stereo instanced drawing; in that case, two copies of each\n    // instance would be drawn, one for left and one for right.\n    int idx = input.instId % 2;\n\n    // Transform the vertex position into world space.\n    pos = mul(pos, model);\n    output.P = pos.xyz;\n\n    // I = v pos in view space\n    half4 eye = half4(0., 0., 0., 1.);\n    output.I = (pos - mul(eye, viewInverse)).xyz;\n\n    // Correct for perspective and project the vertex position onto the screen.\n    pos = mul(pos, viewProjection[idx]);\n    output.pos = (half4)pos;\n\n    // N = normal in view space\n    output.N = -normalize(mul(input.normal, inverse).xyz);\n\n    // Set the instance ID. The pass-through geometry shader will set the\n    // render target array index to whatever value is set here.\n   output.rtvId = idx;\n\n    return output;\n}\n</script>"
+                  },
+                  "name": "twx-tml-text"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "pinnedContent1",
+                    "src-not-pressed": "Uploaded/Icon_PartOverview.png",
+                    "widget-name": "pinnedContent1",
+                    "pressed-expression": "jump()",
+                    "text": "OEM service procedure",
+                    "src": "Uploaded/Icon_PartOverview.png",
+                    "width": "0.08",
+                    "x": "0.0000",
+                    "y": "0.0320",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-3dimage-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "tmlText-1",
+                    "widget-name": "tmlText-1",
+                    "text": "<script name=\"proximityHilite_hl\" type=\"x-shader/x-fragment\">\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n  float4 highlightColor;\n  //----------------------------------- (16 byte boundary)\n  bool   useTexture;\n  bool   useLight;\n  float  transparency;\n  int    pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n  //----------------------------------- (16 byte boundary)\n  float  tick;\n  float3 ding;\n};\n\ncbuffer TMLDefinedConstants : register(b10)\n{\n  float  cutoutDepth;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n  half4  pos   : SV_POSITION;\n  half4  color : COLOR0;\n  half3  I     : NORMAL0;\n  half2  xray  : TEXCOORD0;\n};\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n  min16float4 color = min16float4(1.0,0.5,0.25,1.0);  //orangey\n  float          dp = input.xray.x;\n  float     opacity = abs(dp);\n  float        xray = 1.0 - pow(opacity,3.); \n\n  float dz  = length(input.I);\n  float cd2 = cutoutDepth / 2.;\n  float gz  = smoothstep(cd2,cutoutDepth,dz);\n  \n  min16float4 finalShadedColor  = min16float4(saturate(xray * color).xyz, 1.0);\n  return finalShadedColor * gz;\n}\n\n</script>\n<script name=\"proximityHilite_hl\" type=\"x-shader/x-vertex\">\n\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n  float4x4 model;\n  float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n  float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n  float4x4 viewProjection[2];\n  float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n  half4    pos      : POSITION;\n  half4    normal   : NORMAL;\n  half2    texcoord : TEXCOORD;\n  uint     instId   : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n  half4    pos      : SV_POSITION;\n  half4    color    : COLOR0;\n  half3    I        : NORMAL0;\n  half2    xray     : TEXCOORD0;\n  uint     rtvId    : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n  VertexShaderOutput output;\n  half4 pos    = half4(input.pos);\n\n  // Note which view this vertex has been sent to. Used for matrix lookup.\n  // Taking the modulo of the instance ID allows geometry instancing to be used\n  // along with stereo instanced drawing; in that case, two copies of each\n  // instance would be drawn, one for left and one for right.\n  int idx   = input.instId % 2;\n\n  // Transform the vertex position into world space.\n  pos       = mul(pos, model);\n\n  // I = v pos in view space\n  half4 eye = half4(0., 0., 0., 1.);\n  half3 I   = (pos - mul(eye, viewInverse)).xyz;\n  output.I  = I;\n\n  // N = normal in view space\n  half3 N   = normalize(mul(input.normal, inverse).xyz);\n\n  // get the dot product, and store in the X component of the \n  // output, along with alpha in the Y\n  float dp    = dot(-N, normalize(I));\n  output.xray = half2(dp, 0.);\n\n  // Correct for perspective and project the vertex position onto the screen.\n  pos         = mul(pos, viewProjection[idx]);\n  output.pos  = (half4)pos;\n\n  output.color = (half4)diffuseColor;\n\n  // Set the instance ID. The pass-through geometry shader will set the\n  // render target array index to whatever value is set here.\n  output.rtvId = idx;\n\n  return output;\n}\n</script>"
+                  },
+                  "name": "twx-tml-text"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "cartPanel",
+                    "widget-name": "cartPanel",
+                    "following": "true",
+                    "affects": "cartCheckout,cartLabel,tl4,cpb1,cpb2,cc1,cc2",
+                    "height": "0.22",
+                    "width": "0.2",
+                    "scale": "0.2 0.22 1",
+                    "visible": "false"
+                  },
+                  "name": "twx-tethered",
+                  "children": [
+                    {
+                      "attributes": {
+                        "databind-id": "db-1620315394945",
+                        "source-type": "ui",
+                        "source-label": "3D Image Button",
+                        "source-name": "tl4",
+                        "source-item-type": "property",
+                        "source-item-name": "pressed",
+                        "binding-type": "widget_property",
+                        "from-expression": "app.view['Home'].wdg['tl4']['pressed']",
+                        "to-property": "following"
+                      },
+                      "name": "twx-databind"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "cartCheckout",
+                    "widget-name": "cartCheckout",
+                    "pressed-expression": "navigateUserTo()",
+                    "text": "checkout 2 item",
+                    "src": "Default/checkOn.png",
+                    "width": "0.12",
+                    "x": "0.0000",
+                    "y": "-0.0800",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dpress-button",
+                  "children": [
+                    {
+                      "attributes": {
+                        "eventbind-id": "eb-1619870065788",
+                        "source-type": "widget",
+                        "source-label": "3D Press Button",
+                        "source-name": "cartCheckout",
+                        "source-event": "pressed",
+                        "handler-type": "ui",
+                        "handler-name": "cartPanel",
+                        "handler-service": "hide",
+                        "handler-path": "app.view[\"Home\"].wdg[\"cartPanel\"].svc.hide"
+                      },
+                      "name": "twx-eventbind"
+                    },
+                    {
+                      "attributes": {
+                        "eventbind-id": "eb-1619870105261",
+                        "source-type": "widget",
+                        "source-label": "3D Press Button",
+                        "source-name": "cartCheckout",
+                        "source-event": "pressed",
+                        "handler-type": "ui",
+                        "handler-name": "navigator-1",
+                        "handler-service": "show",
+                        "handler-path": "app.view[\"Home\"].wdg[\"navigator-1\"].svc.show"
+                      },
+                      "name": "twx-eventbind"
+                    },
+                    {
+                      "attributes": {
+                        "eventbind-id": "eb-1620745436767",
+                        "source-type": "widget",
+                        "source-label": "3D Press Button",
+                        "source-name": "cartCheckout",
+                        "source-event": "pressed",
+                        "handler-type": "ui",
+                        "handler-name": "tl2",
+                        "handler-service": "set",
+                        "handler-path": "app.view[\"Home\"].wdg[\"tl2\"].svc.set"
+                      },
+                      "name": "twx-eventbind"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "pinnedInfoPanel",
+                    "widget-name": "pinnedInfoPanel",
+                    "following": "true",
+                    "affects": "pinnedContent1, pinnedContent2, pinnedContent3, pinnedLogo",
+                    "snap": "0.2",
+                    "height": "0.18",
+                    "width": "0.1",
+                    "scale": "0.1 0.18 1",
+                    "visible": "false"
+                  },
+                  "name": "twx-tethered"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "dummy1",
+                    "widget-name": "dummy1",
+                    "is-widget-container": "true",
+                    "src": "Default/holoPlate.pvz",
+                    "scale": "0.1000 0.1800 1.0000",
+                    "x": "0.0017",
+                    "y": "0.0000",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-model",
+                  "children": [
+                    {
+                      "name": "twx-container-content"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "dummy2",
+                    "widget-name": "dummy2",
+                    "width": "0.15",
+                    "scale": "1.0000",
+                    "x": "-0.1601",
+                    "y": "-1.3525",
+                    "z": "0.0050",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "tl2",
+                    "src-not-pressed": "Default/3D_Panel_Unpin.png",
+                    "widget-name": "tl2",
+                    "src": "Default/3D_Panel_Pin.png",
+                    "pressed": "true",
+                    "x": "0.0700",
+                    "y": "0.0796",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dimage-button",
+                  "children": [
+                    {
+                      "attributes": {
+                        "eventbind-id": "eb-1620315329218",
+                        "source-type": "widget",
+                        "source-label": "3D Image Button",
+                        "source-name": "tl2",
+                        "source-event": "pressed",
+                        "handler-type": "ui",
+                        "handler-name": "tl4",
+                        "handler-service": "set",
+                        "handler-path": "app.view[\"Home\"].wdg[\"tl4\"].svc.set"
+                      },
+                      "name": "twx-eventbind"
+                    },
+                    {
+                      "attributes": {
+                        "eventbind-id": "eb-1620315334755",
+                        "source-type": "widget",
+                        "source-label": "3D Image Button",
+                        "source-name": "tl2",
+                        "source-event": "unpressed",
+                        "handler-type": "ui",
+                        "handler-name": "tl4",
+                        "handler-service": "reset",
+                        "handler-path": "app.view[\"Home\"].wdg[\"tl4\"].svc.reset"
+                      },
+                      "name": "twx-eventbind"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "ippb1",
+                    "widget-name": "ippb1",
+                    "pressed-expression": "showCart()",
+                    "text": "Service MagneMotion",
+                    "src": "Uploaded/Icon_ServiceAlert.png",
+                    "width": "0.13",
+                    "x": "-0.0240",
+                    "y": "0.0145",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dpress-button",
+                  "children": [
+                    {
+                      "attributes": {
+                        "eventbind-id": "eb-1619955494636",
+                        "source-type": "widget",
+                        "source-label": "3D Press Button",
+                        "source-name": "ippb1",
+                        "source-event": "pressed",
+                        "handler-type": "ui",
+                        "handler-name": "cartPanel",
+                        "handler-service": "show",
+                        "handler-path": "app.view[\"Home\"].wdg[\"cartPanel\"].svc.show"
+                      },
+                      "name": "twx-eventbind"
+                    }
+                  ]
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "ippb2",
+                    "widget-name": "ippb2",
+                    "text": "Inspect Engine",
+                    "src": "Uploaded/icon_0001_inspect.png",
+                    "width": "0.13",
+                    "x": "-0.0240",
+                    "y": "-0.0319",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dpress-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "ippb3",
+                    "widget-name": "ippb3",
+                    "text": "Lubricate the robot",
+                    "src": "Default/vu_oil.svg",
+                    "width": "0.13",
+                    "x": "-0.0240",
+                    "y": "-0.0790",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dpress-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "ippb4",
+                    "disabled": "true",
+                    "widget-name": "ippb4",
+                    "text": "",
+                    "src": "Uploaded/up-arrow.png",
+                    "color": "rgba(40,40,40, 1);",
+                    "x": "0.0720",
+                    "y": "-0.0083",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dpress-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "ippb5",
+                    "disabled": "true",
+                    "widget-name": "ippb5",
+                    "text": "",
+                    "src": "Uploaded/dn-arrow.png",
+                    "color": "rgba(40,40,40, 1);",
+                    "x": "0.0720",
+                    "y": "-0.0562",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dpress-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "pinnedContent2",
+                    "src-not-pressed": "Uploaded/Icon_Safety.png",
+                    "widget-name": "pinnedContent2",
+                    "text": "OEM opertation procedure",
+                    "src": "Uploaded/Icon_Safety.png",
+                    "width": "0.08",
+                    "x": "0.0000",
+                    "y": "-0.0140",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-3dimage-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "navMarker",
+                    "widget-name": "navMarker",
+                    "src": "Uploaded/panelFlag2.png",
+                    "scale": "0.2500",
+                    "x": "1.6489",
+                    "y": "0.0000",
+                    "z": "2.5342",
+                    "rx": "180.00",
+                    "ry": "-78.04",
+                    "rz": "180.00",
+                    "visible": "false",
+                    "pivot": "7"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "tmlText-2",
+                    "widget-name": "tmlText-2",
+                    "text": "<div ng-repeat=\"obj in tunnel_objects\">\n  <twx-dt-image id=\"{{obj.name}}\"\n   x=\"0\" y=\"10\" z=\"0\" opacity=\"1.0\"\n   rx=\"-90\" ry=\"0\" rz=\"0\" height=\"0.15\" width=\"0.15\"\n  src=\"{{obj.src}}\" hidden=\"false\" decal=\"false\" \n  </twx-dt-image>\n</div>\""
+                  },
+                  "name": "twx-tml-text"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "cartLabel",
+                    "state-format-value": "text",
+                    "font-color": "white",
+                    "widget-name": "cartLabel",
+                    "text": "Parts",
+                    "height": "0.025",
+                    "width": "0.07",
+                    "scale": "1.0000",
+                    "x": "-0.0601",
+                    "y": "0.0866",
+                    "z": "-0.0063",
+                    "rx": "0.00",
+                    "ry": "-0.01",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-label"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "traffic1",
+                    "widget-name": "traffic1",
+                    "src": "Uploaded/tl2.png",
+                    "scale": "0.2500",
+                    "x": "-0.1858",
+                    "y": "-0.4268",
+                    "z": "10.2866",
+                    "rx": "180.00",
+                    "ry": "9.30",
+                    "rz": "180.00"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "traffic2",
+                    "widget-name": "traffic2",
+                    "src": "Uploaded/tl2.png",
+                    "scale": "0.2500",
+                    "x": "-1.3087",
+                    "y": "-0.8909",
+                    "z": "9.2177",
+                    "rx": "180.00",
+                    "ry": "31.99",
+                    "rz": "180.00"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "traffic3",
+                    "widget-name": "traffic3",
+                    "src": "Uploaded/tl2.png",
+                    "scale": "0.2500",
+                    "x": "-3.9212",
+                    "y": "-0.1582",
+                    "z": "-4.8926",
+                    "rx": "0.00",
+                    "ry": "-44.29",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "traffic4",
+                    "widget-name": "traffic4",
+                    "src": "Uploaded/tl2.png",
+                    "scale": "0.2500",
+                    "x": "4.5334",
+                    "y": "-0.8289",
+                    "z": "2.0241",
+                    "rx": "180.00",
+                    "ry": "-38.71",
+                    "rz": "180.00"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "traffic5",
+                    "widget-name": "traffic5",
+                    "src": "Uploaded/tl2.png",
+                    "scale": "0.2500",
+                    "x": "2.0035",
+                    "y": "-0.9631",
+                    "z": "2.9368",
+                    "rx": "180.00",
+                    "ry": "-83.60",
+                    "rz": "-180.00"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "traffic6",
+                    "widget-name": "traffic6",
+                    "src": "Uploaded/tl2.png",
+                    "scale": "0.2500",
+                    "x": "-1.8795",
+                    "y": "-0.9631",
+                    "z": "4.1212",
+                    "rx": "180.00",
+                    "ry": "-33.96",
+                    "rz": "-180.00"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "i6",
+                    "widget-name": "i6",
+                    "src": "Uploaded/panelInfo1.png",
+                    "scale": "0.2500",
+                    "x": "-0.9710",
+                    "y": "-0.1456",
+                    "z": "9.8924",
+                    "rx": "179.02",
+                    "ry": "22.73",
+                    "rz": "179.62"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "i7",
+                    "widget-name": "i7",
+                    "src": "Uploaded/panelInfo1.png",
+                    "scale": "0.2500",
+                    "x": "-2.8851",
+                    "y": "-0.2023",
+                    "z": "7.9096",
+                    "rx": "179.02",
+                    "ry": "22.73",
+                    "rz": "179.62"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "tl4",
+                    "src-not-pressed": "Default/3D_Panel_Unpin.png",
+                    "widget-name": "tl4",
+                    "src": "Default/3D_Panel_Pin.png",
+                    "pressed": "true",
+                    "x": "0.0700",
+                    "y": "0.0800",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dimage-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "cpb1",
+                    "disabled": "true",
+                    "widget-name": "cpb1",
+                    "text": "",
+                    "src": "Uploaded/up-arrow.png",
+                    "color": "rgba(40,40,40, 1);",
+                    "x": "0.0700",
+                    "y": "0.0238",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dpress-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "cpb2",
+                    "disabled": "true",
+                    "widget-name": "cpb2",
+                    "text": "",
+                    "src": "Uploaded/dn-arrow.png",
+                    "color": "rgba(40,40,40, 1);",
+                    "x": "0.0700",
+                    "y": "-0.0241",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dpress-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "cc1",
+                    "src-not-pressed": "Uploaded/parts-_0001_Layer-1.png",
+                    "widget-name": "cc1",
+                    "pressed-expression": "showPart('cc1')",
+                    "src": "Uploaded/parts-_0001_Layer-1.png",
+                    "width": "0.12",
+                    "x": "-0.0300",
+                    "y": "0.0241",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dimage-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "cc2",
+                    "src-not-pressed": "Uploaded/parts-_0000_Layer-2.png",
+                    "widget-name": "cc2",
+                    "pressed-expression": "showPart('cc2')",
+                    "src": "Uploaded/parts-_0000_Layer-2.png",
+                    "width": "0.12",
+                    "x": "-0.0300",
+                    "y": "-0.0278",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-3dimage-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "pinnedContent3",
+                    "src-not-pressed": "Uploaded/Icon_Performance.png",
+                    "widget-name": "pinnedContent3",
+                    "text": "OEM opertation procedure",
+                    "src": "Uploaded/Icon_Performance.png",
+                    "width": "0.08",
+                    "x": "0.0000",
+                    "y": "-0.0600",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00",
+                    "visible": "false"
+                  },
+                  "name": "twx-dt-3dimage-button"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "pinnedLogo",
+                    "widget-name": "pinnedLogo",
+                    "src": "Uploaded/Logo_MagneMotion.png",
+                    "width": "0.08",
+                    "scale": "1.0000",
+                    "x": "0.0000",
+                    "y": "0.0732",
+                    "z": "0.0000",
+                    "rx": "0.00",
+                    "ry": "0.00",
+                    "rz": "0.00"
+                  },
+                  "name": "twx-dt-image"
+                },
+                {
+                  "attributes": {
+                    "twx-widget": "",
+                    "widget-id": "flagShader",
+                    "widget-name": "flagShader",
+                    "text": "<script name=\"panelFlag1hl\" type=\"x-shader/x-vertex\">\n\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n  float4x4 model;\n  float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n  float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n  float4x4 viewProjection[2];\n  float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n  half4    pos      : POSITION;\n  half2    texcoord : TEXCOORD;\n  uint     instId   : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n  half4    pos      : SV_POSITION;\n  half3    I        : NORMAL0;\n  half2    tex      : TEXCOORD0;\n  uint     rtvId    : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n  VertexShaderOutput output;\n  half4 pos = half4(input.pos);\n\n  // Note which view this vertex has been sent to. Used for matrix lookup.\n  // Taking the modulo of the instance ID allows geometry instancing to be used\n  // along with stereo instanced drawing; in that case, two copies of each\n  // instance would be drawn, one for left and one for right.\n  int idx = input.instId % 2;\n\n  // Transform the vertex position into world space.\n  pos = mul(pos, model);\n  // I = v pos in view space\n  half4 eye = half4(0., 0., 0., 1.);\n  output.I  = (pos - mul(eye, viewInverse)).xyz;\n\n\n  // Correct for perspective and project the vertex position onto the screen.\n  pos        = mul(pos, viewProjection[idx]);\n  output.pos = (half4)pos;\n\n  // texture coordinate\n  output.tex = input.texcoord;\n\n  // Set the instance ID. The pass-through geometry shader will set the\n  // render target array index to whatever value is set here.\n  output.rtvId = idx;\n\n  return output;\n}\n</script>\n<script name=\"panelFlag1hl\" type=\"x-shader/x-fragment\">\nTexture2D Texture1 : register(t0);\nTexture2D Texture2 : register(t1);\nsampler Sampler    : register(s0);\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4  highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool     useTexture;\n    bool     useLight;\n    float    transparency;\n    int      pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float    tick;\n    float3   ding;\n};\n\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float    r;\n    float    g;\n    float    b;\n    float    ff;\n    float    nf;\n};\n\ncbuffer MaterialConstantBuffer : register(b2)\n{\n    float4   diffuseColor;\n    int      twoSided;\n    int      useTextureMap;\n    int      useNormalMap;\n    int      useSpecularMap;\n};\n\ncbuffer ModelConstantBuffer : register(b3)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4    pos      : SV_POSITION;\n    half3    I        : NORMAL0;\n    half2    tex      : TEXCOORD0;\n};\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n  min16float4 highlightColorFinal = min16float4(0,0,0,0);\n  if (highlightColor.x >= 0.0) {\n    highlightColorFinal = min16float4(highlightColor);\n  }\n  const float PI=3.14159;\n  min16float4 hlt = min16float4(r,g,b,1.);\n  half2 wave = half2(input.tex.x, input.tex.y+smoothstep(0.25,1.,input.tex.x)*0.09*sin((input.tex.x*2.*PI+tick) % (2.*PI)));\n  min16float4 tx1 = min16float4(Texture1.Sample(Sampler, wave));\n  min16float4 tx2 = min16float4(Texture2.Sample(Sampler, wave));\n\n  min16float4 rx1 = (tx1.r * hlt + min16float4(tx1.b,tx1.b,tx1.b,1.)) * tx1.a;\n  min16float4 rx2 = (tx2.r * hlt + min16float4(1.,1.,1.,1.) * tx2.b) * tx2.a;\n\n  float dz = length(input.I);\n  float cd = (ff > 0.) ? smoothstep((ff * 2.), ff, dz) : 1.;\n  float od = smoothstep((nf / 2.), nf, dz);\n  float gz = clamp(cd * od, 0., 1.);\n\n  min16float4 color = lerp(rx2,lerp(rx1,rx2,rx2.a),gz);\n\n  min16float4 highlightedOutputColor = color + highlightColorFinal;\n  return      highlightedOutputColor;\n}\n</script>\n\n<script name=\"panelFlag2hl\" type=\"x-shader/x-vertex\">\n\n// A constant buffer that stores the model transform.\ncbuffer ModelConstantBuffer : register(b0)\n{\n  float4x4 model;\n  float4x4 inverse;\n};\n\ncbuffer MaterialConstantBuffer : register(b1)\n{\n  float4   diffuseColor;\n};\n\n// A constant buffer that stores each set of view and projection matrices in column-major format.\ncbuffer ViewProjectionConstantBuffer : register(b2)\n{\n  float4x4 viewProjection[2];\n  float4x4 viewInverse;\n};\n\n// Per-vertex data used as input to the vertex shader.\nstruct VertexShaderInput\n{\n  half4    pos      : POSITION;\n  half2    texcoord : TEXCOORD;\n  uint     instId   : SV_InstanceID;\n};\n\n// Per-vertex data passed to the geometry shader.\n// Note that the render target array index will be set by the geometry shader\n// using the value of viewId.\nstruct VertexShaderOutput\n{\n  half4    pos      : SV_POSITION;\n  half3    I        : NORMAL0;\n  half2    tex      : TEXCOORD0;\n  uint     rtvId    : SV_RenderTargetArrayIndex; // SV_InstanceID % 2\n};\n\n// Simple shader to do vertex processing on the GPU.\nVertexShaderOutput main(VertexShaderInput input)\n{\n  VertexShaderOutput output;\n  half4 pos = half4(input.pos);\n\n  // Note which view this vertex has been sent to. Used for matrix lookup.\n  // Taking the modulo of the instance ID allows geometry instancing to be used\n  // along with stereo instanced drawing; in that case, two copies of each\n  // instance would be drawn, one for left and one for right.\n  int idx = input.instId % 2;\n\n  // Transform the vertex position into world space.\n  pos = mul(pos, model);\n  // I = v pos in view space\n  half4 eye = half4(0., 0., 0., 1.);\n  output.I  = (pos - mul(eye, viewInverse)).xyz;\n\n\n  // Correct for perspective and project the vertex position onto the screen.\n  pos        = mul(pos, viewProjection[idx]);\n  output.pos = (half4)pos;\n\n  // texture coordinate\n  output.tex = input.texcoord;\n\n  // Set the instance ID. The pass-through geometry shader will set the\n  // render target array index to whatever value is set here.\n  output.rtvId = idx;\n\n  return output;\n}\n</script>\n<script name=\"panelFlag2hl\" type=\"x-shader/x-fragment\">\nTexture2D Texture1 : register(t0);\nTexture2D Texture2 : register(t1);\nsampler Sampler    : register(s0);\n\ncbuffer ShaderConstantBuffer : register(b0)\n{\n    float4  highlightColor;\n    //----------------------------------- (16 byte boundary)\n    bool     useTexture;\n    bool     useLight;\n    float    transparency;\n    int      pad;\n};\n\ncbuffer RenderConstantBuffer : register(b1)\n{\n    //----------------------------------- (16 byte boundary)\n    float    tick;\n    float3   ding;\n};\n\ncbuffer TMLDefinedConstants : register(b10)\n{\n    float    r;\n    float    g;\n    float    b;\n    float    ff;\n    float    nf;\n};\n\ncbuffer MaterialConstantBuffer : register(b2)\n{\n    float4   diffuseColor;\n    int      twoSided;\n    int      useTextureMap;\n    int      useNormalMap;\n    int      useSpecularMap;\n};\n\ncbuffer ModelConstantBuffer : register(b3)\n{\n    float4x4 model;\n    float4x4 inverse;\n};\n\n// Per-pixel color data passed through the pixel shader.\nstruct PixelShaderInput\n{\n    half4    pos      : SV_POSITION;\n    half3    I        : NORMAL0;\n    half2    tex      : TEXCOORD0;\n};\n\n// The pixel shader passes through the color data. The color data from\n// is interpolated and assigned to a pixel at the rasterization step.\nmin16float4 main(PixelShaderInput input) : SV_TARGET\n{\n  min16float4 highlightColorFinal = min16float4(0,0,0,0);\n  if (highlightColor.x >= 0.0) {\n    highlightColorFinal = min16float4(highlightColor);\n  }\n\n  min16float4 hlt = min16float4(r,g,b,1.);\n  min16float4 tx1 = min16float4(Texture1.Sample(Sampler, input.tex));\n  min16float4 tx2 = min16float4(Texture2.Sample(Sampler, input.tex));\n\n  min16float4 rx1 = (tx1.r * hlt + min16float4(1.,1.,1.,1.) * tx1.b) * tx1.a;\n  min16float4 rx2 = (tx2.r * hlt + min16float4(1.,1.,1.,1.) * tx2.b) * tx2.a;\n\n  float dz = length(input.I);\n  float cd = (ff > 0.) ? smoothstep((ff * 2.), ff, dz) : 1.;\n  float od = smoothstep((nf / 2.), nf, dz);\n  float gz = clamp(cd * od, 0., 1.);\n\n  min16float4 color = lerp(rx2,lerp(rx1,rx2,rx2.a),gz);\n\n  min16float4 highlightedOutputColor = color + highlightColorFinal;\n  return      highlightedOutputColor;\n}\n</script>"
+                  },
+                  "name": "twx-tml-text"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "twx-fragment-parameters"
+    },
+    {
+      "name": "twx-view-data"
+    }
+  ],
+  "name": "twx-view"
+}

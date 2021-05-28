@@ -1,0 +1,295 @@
+{
+  "attributes": {
+    "namespace": "app.mdl"
+  },
+  "children": [
+    {
+      "attributes": {
+        "name": "cartThing",
+        "twx-entity-type": "Things",
+        "twx-entity-name": "cartThing"
+      },
+      "name": "twx-model",
+      "children": [
+        {
+          "attributes": {
+            "name": "getCartTotal",
+            "id": "getCartTotal"
+          },
+          "name": "twx-model-service"
+        },
+        {
+          "attributes": {
+            "name": "checkCart",
+            "id": "checkCart"
+          },
+          "name": "twx-model-service"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "name": "SpatialLocationHelper",
+        "twx-entity-type": "Things",
+        "twx-entity-name": "SpatialLocationHelper"
+      },
+      "name": "twx-model",
+      "children": [
+        {
+          "attributes": {
+            "name": "getLocations",
+            "id": "getLocations"
+          },
+          "name": "twx-model-service"
+        },
+        {
+          "attributes": {
+            "name": "getLocation",
+            "id": "getLocation"
+          },
+          "name": "twx-model-service"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "id": "vumark",
+        "isbound": "false",
+        "isdeletable": "false",
+        "name": "ThingMark",
+        "value": ""
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "id": "template",
+        "isbound": "false",
+        "isdeletable": "false",
+        "name": "Thing Template",
+        "value": ""
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "id": "thing",
+        "isbound": "false",
+        "isdeletable": "false",
+        "name": "Thing",
+        "value": ""
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "id": "targetloc",
+        "isbound": "false",
+        "isdeletable": "true",
+        "name": "targetloc",
+        "value": ""
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "id": "floorOffset",
+        "isbound": "false",
+        "isdeletable": "true",
+        "name": "floorOffset",
+        "value": "1.362"
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "id": "hilite",
+        "isbound": "false",
+        "isdeletable": "true",
+        "name": "hilite",
+        "value": "Default"
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "id": "voiceEnabled",
+        "isbound": "false",
+        "isdeletable": "true",
+        "name": "voiceEnabled",
+        "value": "false"
+      },
+      "name": "twx-app-param"
+    },
+    {
+      "attributes": {
+        "name": "doubletap",
+        "isdeletable": "false",
+        "isvoicealiasable": "true",
+        "expression": "",
+        "voicealias": "show my schedule",
+        "voiceresponse": ""
+      },
+      "name": "twx-app-event",
+      "children": [
+        {
+          "attributes": {
+            "eventbind-id": "eb-1619711916090",
+            "source-type": "event",
+            "source-label": "Application Event",
+            "source-name": "app",
+            "source-event": "doubletap",
+            "handler-type": "ui",
+            "handler-name": "introPanel",
+            "handler-service": "show",
+            "handler-path": "app.view[\"Home\"].wdg[\"introPanel\"].svc.show"
+          },
+          "name": "twx-eventbind"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "name": "swipeleft",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "swiperight",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "swipeforward",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "swipeback",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "swipeup",
+        "isdeletable": "false",
+        "isvoicealiasable": "true"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "hold",
+        "isdeletable": "false",
+        "isvoicealiasable": "true",
+        "expression": "viewCtrl.onhold()"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "stopscan",
+        "isdeletable": "false",
+        "isvoicealiasable": "true",
+        "voicealias": "Stop Scan"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "cart",
+        "isvoicealiasable": "true",
+        "isdeletable": "true",
+        "voicealias": "show me the parts",
+        "voiceresponse": "there are 2 items recommended",
+        "expression": "viewCtrl.showCart()"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "nav",
+        "isvoicealiasable": "true",
+        "isdeletable": "true",
+        "expression": "viewCtrl.navigateUserTo()"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "arr",
+        "isvoicealiasable": "true",
+        "isdeletable": "true",
+        "expression": "viewCtrl.arrived()"
+      },
+      "name": "twx-app-event"
+    },
+    {
+      "attributes": {
+        "name": "reset",
+        "isvoicealiasable": "true",
+        "isdeletable": "true",
+        "voicealias": "reset demo experience",
+        "voiceresponse": "resetting",
+        "expression": "viewCtrl.resetAll()"
+      },
+      "name": "twx-app-event",
+      "children": [
+        {
+          "attributes": {
+            "eventbind-id": "eb-1620590521177",
+            "source-type": "event",
+            "source-label": "Application Event",
+            "source-name": "app",
+            "source-event": "reset",
+            "handler-type": "ui",
+            "handler-name": "pinnedInfoPanel",
+            "handler-service": "hide",
+            "handler-path": "app.view[\"Home\"].wdg[\"pinnedInfoPanel\"].svc.hide"
+          },
+          "name": "twx-eventbind"
+        },
+        {
+          "attributes": {
+            "eventbind-id": "eb-1620745401424",
+            "source-type": "event",
+            "source-label": "Application Event",
+            "source-name": "app",
+            "source-event": "reset",
+            "handler-type": "ui",
+            "handler-name": "introPanel",
+            "handler-service": "hide",
+            "handler-path": "app.view[\"Home\"].wdg[\"introPanel\"].svc.hide"
+          },
+          "name": "twx-eventbind"
+        },
+        {
+          "attributes": {
+            "eventbind-id": "eb-1620745417023",
+            "source-type": "event",
+            "source-label": "Application Event",
+            "source-name": "app",
+            "source-event": "reset",
+            "handler-type": "ui",
+            "handler-name": "tl2",
+            "handler-service": "set",
+            "handler-path": "app.view[\"Home\"].wdg[\"tl2\"].svc.set"
+          },
+          "name": "twx-eventbind"
+        }
+      ]
+    }
+  ],
+  "name": "twx-app-mdl"
+}
